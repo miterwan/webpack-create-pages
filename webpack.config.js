@@ -7,6 +7,7 @@ const resolve = dir => {
 }
 
 module.exports = {
+  target: 'web',
   mode: 'development',
   // mode: 'production',
   entry: {
@@ -19,7 +20,8 @@ module.exports = {
     path: resolve('dist'),
     // 配置打包后静态资源资源相对于线上服务器的路径地址
     publicPath: '/',
-    clean: true
+    // 开发时不要设置清除，否则修改js/css时会导致图片等资源丢失
+    // clean: true
   },
   resolve: {
     // 配置路径别名
@@ -135,7 +137,6 @@ module.exports = {
   ],
   devtool: 'source-map',
   devServer: {
-    hot: false,
-    // open: true
+    hot: false
   }
 }
