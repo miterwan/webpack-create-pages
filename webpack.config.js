@@ -1,13 +1,13 @@
 const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const resolve = dir => {
   return path.join(__dirname, dir)
 }
 
 module.exports = {
-  target: 'web',
   mode: 'development',
   // mode: 'production',
   entry: {
@@ -27,7 +27,7 @@ module.exports = {
     // 配置路径别名
     alias: {
       '@': resolve('src'),
-      '@img': resolve('src/images'),
+      '@imgs': resolve('src/images'),
       '@cpn': resolve('src/components'),
       '@pages': resolve('src/pages'),
     }
@@ -42,7 +42,7 @@ module.exports = {
             loader: 'underscore-template-loader',
             options: {
               // 处理图片引入，视频引入
-              attributes: ['img:src', 'video:src']
+              attributes: ['img:src', 'video:src', 'audio:src']
             }
           }
         ]
@@ -60,9 +60,10 @@ module.exports = {
           'sass-loader'
         ]
       },
+      // 由于webpack5.0内置资源处理对underscore-template-loader不兼容，故图片等资源还是采取外置loader处理
       // 图片资源处理
       {
-        test: /\.(png|jpe?g|gif|svg)$/i,
+        test: /\.(png|jpe?g|gif|svg|ico)$/i,
         // webpack5.0+自带内置资源处理，会影响到scss的背景图片使用，故设置此值 
         type: 'javascript/auto',
         use: [
@@ -72,29 +73,10 @@ module.exports = {
               name: '[name].[hash:8].[ext]',
               // 打包统一输出到images文件夹
               outputPath: 'images',
-              // 防止图片引用读取错误
+              // 防止图片资源引用读取错误
               esModule: false,
               // 小于8kb转为base64
-              limit: 8 * 1024
-            }
-          }
-        ]
-      },
-      // 视频资源类处理
-      {
-        test: /\.(mp4|mov)$/i,
-        type: 'javascript/auto',
-        use: [
-          {
-            loader: 'url-loader',
-            options: {
-              name: '[name].[hash:8].[ext]',
-              // 打包统一输出到media文件夹
-              outputPath: 'media',
-              // 防止视频引用读取错误
-              esModule: false,
-              // 小于8kb转为base64
-              limit: 8 * 1024
+              limit: 0.01 * 1024
             }
           }
         ]
@@ -102,18 +84,30 @@ module.exports = {
       // 字体资源类处理
       {
         test: /\.(woff|woff2|eot|ttf|otf)$/i,
-        // webpack5.0+自带内置资源处理，会影响到scss的背景图片使用，故设置此值 
         type: 'javascript/auto',
         use: [
           {
             loader: 'url-loader',
             options: {
               name: '[name].[hash:8].[ext]',
-              // 打包统一输出到images文件夹
               outputPath: 'fonts',
-              // 防止视频引用读取错误
               esModule: false,
-              // 小于8kb转为base64
+              limit: 8 * 1024
+            }
+          }
+        ]
+      },
+      // 音频/视频资源类处理
+      {
+        test: /\.(mp4|mov|webm|ogg|mp3|wav|flac|aac)$/i,
+        type: 'javascript/auto',
+        use: [
+          {
+            loader: 'url-loader',
+            options: {
+              name: '[name].[hash:8].[ext]',
+              outputPath: 'media',
+              esModule: false,
               limit: 8 * 1024
             }
           }
@@ -133,8 +127,20 @@ module.exports = {
       template: resolve('src/pages/contact/index.html'),
       filename: 'contact.html',
       chunks: ['contact']
+    }),
+    // 静态资源，不需要经过webpack处理的直接复制到打包目录
+    new CopyWebpackPlugin({
+      patterns: [
+        { from: resolve('src/assets'), to: 'static' }
+      ]
     })
+    // new MiniCssExtractPlugin()
   ],
+  optimization: {
+    splitChunks: {
+      minSize: 0
+    }
+  },
   devtool: 'source-map',
   devServer: {
     hot: false
