@@ -26,8 +26,13 @@ module.exports = {
           {
             loader: 'underscore-template-loader',
             options: {
-              // 处理图片引入，视频引入
-              attributes: ['img:src', 'video:src', 'audio:src']
+              // 处理图片，视频，音频引入
+              attributes: [
+                'img:src',
+                // 如若需要可配置，一般放置在静态资源文件夹直接copy到打包目录
+                // 'video:src',
+                // 'audio:src'
+              ]
             }
           }
         ]
@@ -36,11 +41,18 @@ module.exports = {
       {
         test: /\.s[ac]ss$/i,
         use: [
-          // MiniCssExtractPlugin.loader,
-          // 将js字符串生成为style节点
-          'style-loader',
+          // 不使用热更新开发，直接以外联样式加载
+          MiniCssExtractPlugin.loader,
           // 将CSS转化成CommonJS模块
-          'css-loader',
+          {
+            loader: 'css-loader',
+            options: {
+              // 配置应用规则之前的loader使用数量
+              importLoaders: 2,
+            }
+          },
+          // 浏览器前缀处理
+          'postcss-loader',
           // 将Sass编译成CSS
           'sass-loader'
         ]
@@ -113,13 +125,13 @@ module.exports = {
       filename: 'contact.html',
       chunks: ['contact']
     }),
-    // 静态资源，不需要经过webpack处理的直接复制到打包目录
+    // 静态资源文件夹，不需要经过webpack处理的直接复制到打包目录
     new CopyWebpackPlugin({
       patterns: [
-        { from: resolve('src/assets'), to: 'static' }
+        // 直接放在根目录下，与.html文件同级
+        { from: resolve('src/assets'), to: '' }
       ]
     })
-    // new MiniCssExtractPlugin()
   ],
   optimization: {
     // 代码优化分割
@@ -139,5 +151,13 @@ module.exports = {
         }
       }
     }
+  },
+  performance: {
+    // 只检测js文件的大小超过1MB的时候进行警告提示
+    assetFilter: function (assetFilename) {
+      return assetFilename.endsWith('.js');
+    },
+    // 超过1MB警告提示
+    maxAssetSize: 1024 * 1024
   }
 }
