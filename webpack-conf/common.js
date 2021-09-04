@@ -1,27 +1,12 @@
-const path = require('path')
+const { resolve } = require('./utils')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-const resolve = dir => {
-  return path.join(__dirname, dir)
-}
-
 module.exports = {
-  mode: 'development',
-  // mode: 'production',
   entry: {
     home: './src/pages/home/index.js',
     contact: './src/pages/contact/index.js'
-  },
-  output: {
-    filename: 'js/[name].[hash:8].js',
-    // 配置打包后的资源存放目录
-    path: resolve('dist'),
-    // 配置打包后静态资源资源相对于线上服务器的路径地址
-    publicPath: '/',
-    // 开发时不要设置清除，否则修改js/css时会导致图片等资源丢失
-    // clean: true
   },
   resolve: {
     // 配置路径别名
@@ -137,12 +122,22 @@ module.exports = {
     // new MiniCssExtractPlugin()
   ],
   optimization: {
+    // 代码优化分割
     splitChunks: {
-      minSize: 0
+      // 对所有导入的模块进行处理
+      chunks: 'all',
+      cacheGroups: {
+        default: {
+          // 公共业务代码命名为common
+          name: 'common',
+          // 生成公共模块的最小体积，设为0，只要是用到的公共模块就生成公共模块
+          minSize: 0,
+          // 最少被引用2次
+          minChunks: 2,
+          // 多个缓存组配置的时候复用chunk设置
+          reuseExistingChunk: true
+        }
+      }
     }
-  },
-  devtool: 'source-map',
-  devServer: {
-    hot: false
   }
 }
