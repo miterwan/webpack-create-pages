@@ -1,13 +1,12 @@
-const { resolve } = require('./utils')
+const { resolve, getPagesConfig } = require('./utils')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
+const pageConfig = getPagesConfig()
+
 module.exports = {
-  entry: {
-    home: './src/pages/home/index.js',
-    contact: './src/pages/contact/index.js'
-  },
+  entry: pageConfig.entry,
   resolve: {
     // 配置路径别名
     alias: {
@@ -15,6 +14,7 @@ module.exports = {
       '@imgs': resolve('src/images'),
       '@cpn': resolve('src/components'),
       '@pages': resolve('src/pages'),
+      ...pageConfig.alias
     }
   },
   module: {
@@ -128,18 +128,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      title: '主页',
-      template: resolve('src/pages/home/index.html'),
-      filename: 'index.html',
-      chunks: ['home']
-    }),
-    new HtmlWebpackPlugin({
-      title: '联系',
-      template: resolve('src/pages/contact/index.html'),
-      filename: 'contact.html',
-      chunks: ['contact']
-    }),
+    ...pageConfig.htmlWebpackPlugins,
     // 静态资源文件夹，不需要经过webpack处理的直接复制到打包目录
     new CopyWebpackPlugin({
       patterns: [
