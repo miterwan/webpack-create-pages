@@ -57,6 +57,21 @@ module.exports = {
           'sass-loader'
         ]
       },
+      // js的babel处理
+      {
+        test: /\.m?js$/,
+        // 不处理npm包
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              // 使用缓存
+              cacheDirectory: true
+            }
+          }
+        ]
+      },
       // 由于webpack5.0内置资源处理对underscore-template-loader不兼容，故图片等资源还是采取外置loader处理
       // 图片资源处理
       {

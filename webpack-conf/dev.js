@@ -12,7 +12,7 @@ const config = {
       filename: 'css/[name].css'
     })
   ],
-  // devtool: 'source-map',
+  devtool: 'inline-source-map',
   devServer: {
     // 不开启热更新，只使用live reload
     hot: false
