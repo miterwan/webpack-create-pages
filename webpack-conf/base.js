@@ -1,7 +1,7 @@
-const { resolve, getPagesConfig } = require('./utils')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+
+const { resolve, getPagesConfig } = require('./utils')
 
 const pageConfig = getPagesConfig()
 
@@ -13,7 +13,6 @@ module.exports = {
       '@': resolve('src'),
       '@imgs': resolve('src/images'),
       '@cpn': resolve('src/components'),
-      '@pages': resolve('src/pages'),
       ...pageConfig.alias
     }
   },
@@ -28,7 +27,7 @@ module.exports = {
             options: {
               // 处理图片，视频，音频引入
               attributes: [
-                'img:src',
+                'img:src'
                 // 如若需要可配置，一般放置在静态资源文件夹直接copy到打包目录
                 // 'video:src',
                 // 'audio:src'
@@ -48,7 +47,7 @@ module.exports = {
             loader: 'css-loader',
             options: {
               // 配置应用规则之前的loader使用数量
-              importLoaders: 2,
+              importLoaders: 2
             }
           },
           // 浏览器前缀处理
@@ -76,7 +75,7 @@ module.exports = {
       // 图片资源处理
       {
         test: /\.(png|jpe?g|gif|svg|ico)$/i,
-        // webpack5.0+自带内置资源处理，会影响到scss的背景图片使用，故设置此值 
+        // webpack5.0+自带内置资源处理，会影响到scss的背景图片使用，故设置此值
         type: 'javascript/auto',
         use: [
           {
@@ -124,7 +123,7 @@ module.exports = {
             }
           }
         ]
-      },
+      }
     ]
   },
   plugins: [
@@ -142,16 +141,25 @@ module.exports = {
     splitChunks: {
       // 对所有导入的模块进行处理
       chunks: 'all',
+      // 生成公共模块的最小体积，设为0，只要是用到的公共模块就生成公共模块
+      minSize: 0,
       cacheGroups: {
         default: {
           // 公共业务代码命名为common
           name: 'common',
-          // 生成公共模块的最小体积，设为0，只要是用到的公共模块就生成公共模块
-          minSize: 0,
           // 最少被引用2次
           minChunks: 2,
           // 多个缓存组配置的时候复用chunk设置
-          reuseExistingChunk: true
+          reuseExistingChunk: true,
+          priority: -20
+        },
+        // 第三方库引用配置
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendor',
+          minChunks: 1,
+          reuseExistingChunk: true,
+          priority: -10
         }
       }
     }
@@ -159,7 +167,7 @@ module.exports = {
   performance: {
     // 只检测js文件的大小超过1MB的时候进行警告提示
     assetFilter: function (assetFilename) {
-      return assetFilename.endsWith('.js');
+      return assetFilename.endsWith('.js')
     },
     // 超过1MB警告提示
     maxAssetSize: 1024 * 1024
