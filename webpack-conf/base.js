@@ -1,7 +1,7 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
-const { resolve, getPagesConfig } = require('./utils')
+const { resolve, getPagesConfig, getSpritePlugins } = require('./utils')
 
 const pageConfig = getPagesConfig()
 
@@ -38,7 +38,7 @@ module.exports = {
       },
       // scss文件处理
       {
-        test: /\.s[ac]ss$/i,
+        test: /\.(c|s[ac])ss$/i,
         use: [
           // 不使用热更新开发，直接以外联样式加载
           MiniCssExtractPlugin.loader,
@@ -134,7 +134,9 @@ module.exports = {
         // 直接放在根目录下，与.html文件同级
         { from: resolve('src/assets'), to: '' }
       ]
-    })
+    }),
+    // 雪碧图处理
+    ...getSpritePlugins()
   ],
   optimization: {
     // 代码优化分割
