@@ -1,6 +1,6 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const { merge } = require('webpack-merge')
-const { resolve } = require('./utils')
+const { resolve, getSpritePlugins } = require('./utils')
 const base = require('./base')
 
 const config = {
@@ -9,6 +9,8 @@ const config = {
     filename: 'js/[name].js'
   },
   plugins: [
+    // 雪碧图处理
+    ...getSpritePlugins(),
     new MiniCssExtractPlugin({
       filename: 'css/[name].css'
     })

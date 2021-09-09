@@ -1,4 +1,6 @@
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
+const ImageminWebpackPlugin = require('imagemin-webpack-plugin').default
+
 const { merge } = require('webpack-merge')
 const { resolve } = require('./utils')
 const base = require('./base')
@@ -17,6 +19,14 @@ const config = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: 'css/[name].[contenthash:8].css'
+    }),
+    // 打包时对图片资源进行压缩
+    new ImageminWebpackPlugin({
+      test: /\.(jpe?g|png|gif|svg)$/i,
+      pngquant: [0.8, 1],
+      gifsicle: {
+        optimizationLevel: 3
+      }
     })
   ]
 }
