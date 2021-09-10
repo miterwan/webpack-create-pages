@@ -122,4 +122,19 @@ import './index.scss'
 ## 自定义配置
 
 - 如有特殊需求，更改`webpack-conf`文件夹下的相关 webpack 配置即可
-- 比如需要全局引入jq，免去在每个页面手动引入，可以安装[ProvidePlugin](https://webpack.docschina.org/plugins/provide-plugin/)进行配置
+- 比如需要全局引入 jq，免去在每个页面手动引入，可以安装[ProvidePlugin](https://webpack.docschina.org/plugins/provide-plugin/)进行配置
+
+## 开始
+
+```bash
+# 安装的时候由于图片压缩插件的问题，会导致安装失败
+# 更改电脑系统的host：添加以下内容即可
+# 151.101.184.133   raw.githubusercontent.com
+npm i
+
+# 启动开发
+npm run dev
+
+# 打包构建
+npm run build
+```
