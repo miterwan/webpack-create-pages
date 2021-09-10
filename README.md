@@ -113,9 +113,13 @@
 import '@/scss/common.scss'
 import './index.scss'
 
+// 引入第三方库
+// import $ from 'jquery'
+
 // do something
 ```
 
 ## 自定义配置
 
 - 如有特殊需求，更改`webpack-conf`文件夹下的相关 webpack 配置即可
+- 比如需要全局引入jq，免去在每个页面手动引入，可以安装[ProvidePlugin](https://webpack.docschina.org/plugins/provide-plugin/)进行配置
