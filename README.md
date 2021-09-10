@@ -55,6 +55,67 @@
 
 ```
 
+## 路径别名
+
+```txt
+通用部分：
+@: src
+@imgs: src/images
+@cpn: src/components
+
+独立页面部分（根据页面自动匹配，无须手动配置）
+@home: src/pages/home
+@other: src/pages/other
+...
+
+```
+
+## 使用注意点
+
+### html 部分
+
+```html
+<!-- 引入公共html文件是，前者引入需要单引号，传递的属性变量需要双引号 -->
+@require('~@cpn/header.html', { "title": "主页" })
+
+<p>主页</p>
+
+<!-- 跳转页面使用相对路径 -->
+<a href="./*.html">跳转其他页面</a>
+
+<!-- 图片引入部分推荐“~别名”的路径引入 -->
+<img src="~@home/images/**.png" alt="" />
+
+<!-- 视频等媒体资源部分一般放在静态资源文件夹-assets -->
+<!-- 引入直接使用相对路径即可 -->
+<video src="./media/*.mp4"></video>
+
+<!-- 雪碧图部分生成的类为.icon-* -->
+<i class="icon-*"></i>
+
+@require('~@cpn/footer.html')
+```
+
+### css 部分
+
+```scss
+// 背景图片引入也推荐别名路径引入
+.test {
+  background-image: url(@home/images/*.png);
+}
+```
+
+### js 部分
+
+```js
+// 每个页面的index.js为入口文件
+// 引入公共文件scss跟页面部分scss，会以外链形式引入
+import '@/scss/common.scss'
+import './index.scss'
+
+// do something
+```
+
 ## 自定义配置
 
 - 如有特殊需求，更改`webpack-conf`文件夹下的相关 webpack 配置即可
